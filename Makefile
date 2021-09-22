@@ -314,7 +314,7 @@ $(REFS)trainset10_082014.pds.tax $(REFS)trainset10_082014.pds.fasta :
 
 data/miseq/mouse.files : code/get_contigsfile.R
 	source /etc/profile.d/http_proxy.sh  # required for internet on the Great Lakes cluster
-	wget -N -P data/miseq http://www.mothur.org/MiSeqDevelopmentData/StabilityNoMetaG.tar; \
+	wget -N -P data/miseq https://mothur.s3.us-east-2.amazonaws.com/data/MiSeqDevelopmentData/StabilityNoMetaG.tar; \
 	tar xvf data/miseq/StabilityNoMetaG.tar -C data/miseq/; \
 	gunzip -f data/miseq/*gz; \
 	rm data/miseq/StabilityNoMetaG.tar; \
