@@ -308,7 +308,7 @@ $(REFS)silva.v4.align : $(REFS)silva.bacteria.align
 $(REFS)trainset10_082014.pds.tax $(REFS)trainset10_082014.pds.fasta :
 	source /etc/profile.d/http_proxy.sh  # required for internet on the Great Lakes cluster
 	wget -N -P $(REFS) https://mothur.s3.us-east-2.amazonaws.com/wiki/trainset10_082014.pds.tgz; \
-	tar xvzf $(REFS)Trainset10_082014.pds.tgz -C $(REFS);\
+	tar xvzf $(REFS)trainset10_082014.pds.tgz -C $(REFS);\
 	mv $(REFS)trainset10_082014.pds/trainset10_082014.* $(REFS);\
 	rm -rf $(REFS)trainset10_082014.pds
 
