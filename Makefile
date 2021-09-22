@@ -323,14 +323,14 @@ data/miseq/mouse.files : code/get_contigsfile.R
 #M_FRACTION = 0.05 0.1 0.2 0.4 1.0
 M_FRACTION = 0.2 0.4 0.6 0.8 1.0
 
-data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta : code/process_mice.sh data/miseq/miseq.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
-	bash code/process_mice.sh data/miseq/miseq.files
+data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta : code/process_mice.sh data/miseq/mouse.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
+	bash code/process_mice.sh data/miseq/mouse.files
 
-data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.denovo.uchime.pick.pick.count_table : code/process_mice.sh data/miseq/miseq.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
-	bash code/process_mice.sh data/miseq/miseq.files
+data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.denovo.uchime.pick.pick.count_table : code/process_mice.sh data/miseq/mouse.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
+	bash code/process_mice.sh data/miseq/mouse.files
 
-data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pds.wang.pick.taxonomy : code/process_mice.sh data/miseq/miseq.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
-	bash code/process_mice.sh data/miseq/miseq.files
+data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pds.wang.pick.taxonomy : code/process_mice.sh data/miseq/mouse.files data/references/silva.bacteria.align data/references/trainset10_082014.pds.fasta data/references/trainset10_082014.pds.tax
+	bash code/process_mice.sh data/miseq/mouse.files
 
 
 data/miseq/miseq.seq.info : code/get_miseq_info.R data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.denovo.uchime.pick.pick.count_table
