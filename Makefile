@@ -271,7 +271,7 @@ data/he/he.vagc.rarefaction : $(HE_VAGC_LIST) code/rarefy_data.R
 REFS = data/references/
 $(REFS)silva.bacteria.align :
 	source /etc/profile.d/http_proxy.sh  # required for internet on the Great Lakes cluster
-	wget -N -P $(REFS) http:/www.mothur.org/w/images/2/27/Silva.nr_v119.tgz; \
+	wget -N -P $(REFS) http://www.mothur.org/w/images/2/27/Silva.nr_v119.tgz; \
 	tar xvzf $(REFS)Silva.nr_v119.tgz -C $(REFS);
 	mothur "#get.lineage(fasta=$(REFS)silva.nr_v119.align, taxonomy=$(REFS)silva.nr_v119.tax, taxon=Bacteria)";
 	mv $(REFS)silva.nr_v119.pick.align $(REFS)silva.bacteria.align; \
@@ -280,7 +280,7 @@ $(REFS)silva.bacteria.align :
 	rm $(REFS)silva.nr_v119.*
 
 $(REFS)silva.bact_archaea.align : $(REFS)silva.bacteria.align
-	wget -N -P $(REFS) http:/www.mothur.org/w/images/2/27/Silva.nr_v119.tgz; \
+	wget -N -P $(REFS) http://www.mothur.org/w/images/2/27/Silva.nr_v119.tgz; \
 	tar xvzf $(REFS)Silva.nr_v119.tgz -C $(REFS);
 	mothur "#get.lineage(fasta=$(REFS)silva.nr_v119.align, taxonomy=$(REFS)silva.nr_v119.tax, taxon=Archaea)";
 	cp $(REFS)silva.bacteria.align $(REFS)silva.bact_archaea.align;
@@ -307,14 +307,14 @@ $(REFS)silva.v4.align : $(REFS)silva.bacteria.align
 #get the rdp training set data
 $(REFS)trainset10_082014.pds.tax $(REFS)trainset10_082014.pds.fasta :
 	source /etc/profile.d/http_proxy.sh  # required for internet on the Great Lakes cluster
-	wget -N -P $(REFS) http:/www.mothur.org/w/images/2/24/Trainset10_082014.pds.tgz; \
+	wget -N -P $(REFS) http://www.mothur.org/w/images/2/24/Trainset10_082014.pds.tgz; \
 	tar xvzf $(REFS)Trainset10_082014.pds.tgz -C $(REFS);\
 	mv $(REFS)trainset10_082014.pds/trainset10_082014.* $(REFS);\
 	rm -rf $(REFS)trainset10_082014.pds
 
 data/miseq/mouse.files : code/get_contigsfile.R
 	source /etc/profile.d/http_proxy.sh  # required for internet on the Great Lakes cluster
-	wget -N -P data/miseq http:/www.mothur.org/MiSeqDevelopmentData/StabilityNoMetaG.tar; \
+	wget -N -P data/miseq http://www.mothur.org/MiSeqDevelopmentData/StabilityNoMetaG.tar; \
 	tar xvf data/miseq/StabilityNoMetaG.tar -C data/miseq/; \
 	gunzip -f data/miseq/*gz; \
 	rm data/miseq/StabilityNoMetaG.tar; \
