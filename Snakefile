@@ -205,7 +205,7 @@ rule prep_dist_MISEQ1:
     input:
         dist="data/miseq/miseq_1.0_01.unique.dist"
     output:
-        dist='data/miseq/miseq_1.0_01.unique.ng.dist'
+        dist='results/miseq_1.0_01/miseq_1.0_01.unique.ng.dist'
     shell:
         """
         cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
@@ -225,7 +225,7 @@ rule sensspec_vsearch_MISEQ1:
     input:
         list=rules.replace_hyphens_MISEQ1.output.list,
         count_table="data/miseq_PDS/miseq_PDS.count_table",
-        dist='data/miseq_1.0_01/miseq_1.0_01.unique.ng.dist'
+        dist=rules.prep_dist_MISEQ1
     output:
         tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
