@@ -29,8 +29,8 @@ rule copy_pds_files:
         count_table='data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.denovo.uchime.pick.pick.count_table',
         fasta='data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta'
     output:
-        count_table="data/miseq_pds/miseq_pds.count_table",
-        fasta="data/miseq_pds/miseq_pds.fasta"
+        count_table="data/miseq_PDS/miseq_PDS.count_table",
+        fasta="data/miseq_PDS/miseq_PDS.fasta"
     shell:
         """
         cp {input.count_table} {output.count_table}
