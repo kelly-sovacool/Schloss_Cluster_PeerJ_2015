@@ -9,6 +9,6 @@ code/vsearch/vsearch --maxaccepts 16 --usersort --id 0.97 --minseqlength 30 --wo
 
 R -e "source('code/uc_to_list.R'); uc_to_list('$ROOT.sorted.uc', '$ROOT.clustered.uc')"
 
-rm $ROOT.sorted.uc $ROOT.sorted.fna $ROOT.sorted.log $ROOT.clustered.uc $ROOT.clustered.log
+#rm $ROOT.sorted.uc $ROOT.sorted.fna $ROOT.sorted.log $ROOT.clustered.uc $ROOT.clustered.log
 
 
