@@ -225,7 +225,7 @@ rule sensspec_vsearch_MISEQ1:
     input:
         list=rules.replace_hyphens_MISEQ1.output.list,
         count_table="data/miseq_PDS/miseq_PDS.count_table",
-        dist=rules.prep_dist_MISEQ1
+        dist=rules.prep_dist_MISEQ1.output.dist
     output:
         tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
