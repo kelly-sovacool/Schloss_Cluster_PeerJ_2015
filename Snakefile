@@ -191,7 +191,7 @@ rule count_seqs:
         done
         """
 
-rule uc_to_list_miseq:
+rule uc_to_list_MISEQ1:
     input:
         code='code/uc_to_list_KLS.R',
         sorted='data/miseq/miseq_1.0_01.vdgc.sorted.uc',
@@ -200,3 +200,20 @@ rule uc_to_list_miseq:
         list='results/miseq_1.0_01/de_novo/miseq_1.0_01.list'
     script:
         'code/uc_to_list_KLS.R'
+
+rule sensspec_vsearch_MISEQ1:
+    input:
+        list=rules.uc_to_list_MISEQ1.output.list,
+        count_table="data/miseq_PDS/miseq_PDS.count_table",
+        dist='data/miseq/miseq_1.0_01.unique.dist'
+    output:
+        tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
+    params:
+        outdir='rresults/miseq_1.0_01/de_novo/'
+    log:
+        'log/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
+    shell:
+        """
+        mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
+            sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
+        """
