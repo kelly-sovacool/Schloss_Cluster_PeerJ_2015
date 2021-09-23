@@ -190,3 +190,13 @@ rule count_seqs:
             echo "${{f}}\t${{nseqs}}" >> {output.txt}
         done
         """
+
+rule uc_to_list_miseq:
+    input:
+        code='code/uc_to_list_KLS.R',
+        sorted='data/miseq/miseq_1.0_01.vdgc.sorted.uc',
+        clustered='data/miseq/miseq_1.0_01.vdgc.clustered.uc'
+    output:
+        list='results/miseq_1.0_01/de_novo/miseq_1.0_01.list'
+    script:
+        'code/uc_to_list_KLS.R'
