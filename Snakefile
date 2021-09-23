@@ -187,6 +187,6 @@ rule count_seqs:
         """
         for f in {input}; do
             nseqs=$(grep '>' $f | wc -l)
-            echo "${f}\t${nseqs}" >> {output.txt}
+            echo "${{f}}\t${{nseqs}}" >> {output.txt}
         done
         """
