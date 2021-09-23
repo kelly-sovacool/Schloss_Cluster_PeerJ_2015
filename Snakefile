@@ -237,9 +237,9 @@ rule sensspec_vsearch_MISEQ1:
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist
     output:
-        tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
+        tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.ng.sensspec'
     params:
-        outdir='rresults/miseq_1.0_01/de_novo/'
+        outdir='results/miseq_1.0_01/de_novo/'
     log:
         'log/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
     shell:
