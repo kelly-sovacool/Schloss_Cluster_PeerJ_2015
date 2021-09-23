@@ -208,7 +208,7 @@ rule prep_dist_MISEQ1:
         dist='results/miseq_1.0_01/miseq_1.0_01.unique.ng.dist'
     shell:
         """
-        cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
+        cat {input.dist} |  sed 's/-/_/g' > {output.dist}
         """
 
 rule prep_list_MISEQ1:
