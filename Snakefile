@@ -1,14 +1,14 @@
 
 rule download_vsearch_altVersion:
     output:
-        tar='code/vsearch-{version}-linux-x86_64.tar.gz',
         bin='code/vsearch-{version}/vsearch'
     params:
+        tar='bin/vsearch-{version}-linux-x86_64.tar.gz',
         bin='bin/vsearch-{version}-linux-x86_64/bin/vsearch'
     shell:
         """
         wget -P bin/ https://github.com/torognes/vsearch/releases/download/v{wildcards.version}/vsearch-{wildcards.version}-linux-x86_64.tar.gz
-        tar -C bin/ -xzvf {output.tar}
+        tar -C bin/ -xzvf {params.tar}
         mv {params.bin} {output.bin}
         rm -rf bin/
         """
