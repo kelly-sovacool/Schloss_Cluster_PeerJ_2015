@@ -5,10 +5,13 @@ max_rejects = 64
 # the default value of wordlength is already 8 but I'm paranoid
 word_length = 8
 
+datasets = ["miseq_PDS", "mouse_KLS"]
+
 rule targets:
     input:
         expand("results/{dataset}/de_novo/{dataset}.sensspec",
-                dataset = ["miseq_PDS", "mouse_KLS"])
+                dataset = datasets),
+        'results/seq_counts.txt'
 
 rule download_vsearch_altVersion:
     output:
@@ -174,4 +177,16 @@ rule sensspec_vsearch:
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
-        # mothur "#sens.spec(column=data/miseq/miseq_1.0_01.unique.dist, list=data/miseq/miseq_1.0_01.vdgc.list, name=data/miseq/miseq_1.0_01.names, label=userLabel, cutoff=0.03, outputdir=data/miseq)"
+
+rule count_seqs:
+    input:
+        expand('data/{dataset}/{dataset}.fasta', dataset = datasets)
+    output:
+        txt='results/seq_counts.txt'
+    shell:
+        """
+        for f in {input}; do
+            nseqs=$(grep '>' $f | wc -l)
+            echo "${f}\t${nseqs}" >> {output.txt}
+        done
+        """
