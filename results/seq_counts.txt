@@ -1,0 +1,2 @@
+data/miseq_PDS/miseq_PDS.fasta	35831
+data/mouse_KLS/mouse_KLS.fasta	35876
