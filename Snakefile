@@ -245,5 +245,5 @@ rule sensspec_vsearch_MISEQ1:
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
-            sens.spec(list={input.list}, names={input.names}, column={input.dist}) '
+            sens.spec(list={input.list}, name={input.names}, column={input.dist}) '
         """
