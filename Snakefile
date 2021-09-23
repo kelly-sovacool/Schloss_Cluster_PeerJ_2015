@@ -1,3 +1,14 @@
+perc_identity = 0.97  # to match mothur's 0.3 dissimilarity threshold
+min_seq_length = 30 # from Pat's vsearch script
+max_accepts = 16
+max_rejects = 64
+# the default value of wordlength is already 8 but I'm paranoid
+word_length = 8
+
+rule targets:
+    input:
+        expand("results/{dataset}/de_novo/{dataset}.sensspec",
+                dataset = ["miseq_PDS", "mouse_KLS"])
 
 rule download_vsearch_altVersion:
     output:
@@ -13,25 +24,70 @@ rule download_vsearch_altVersion:
         rm -rf bin/
         """
 
-rule get_vdgc_sensspec:
+rule copy_pds_files:
+    input:
+        count_table='data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.denovo.uchime.pick.pick.count_table',
+        fasta='data/miseq/miseq.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta'
     output:
-        sensspec="data/miseq/miseq_0.2_01.vdgc.sensspec"
+        count_table="data/miseq_pds/miseq_pds.count_table",
+        fasta="data/miseq_pds/miseq_pds.fasta"
     shell:
         """
-        make -j 8 {output.sensspec}
+        cp {input.count_table} {output.count_table}
+        cp {input.fasta} {output.fasta}
+        """
+
+rule calc_dists_dataset:
+    input:
+        fasta="data/{dataset}/{dataset}.fasta"
+    output:
+        column="data/{dataset}/{dataset}.dist"
+    params:
+        outdir="data/{dataset}/"
+    log:
+        "log/{dataset}/calc_dists.log"
+    resources:
+        procs=16
+    shell:
+        """
+        mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
+            dist.seqs(fasta={input.fasta}, cutoff=0.03, processors={resources.procs}) '
+        """
+
+# replace dots/hyphens in fasta headers (1st & 2nd occurrence),
+# but not in the distance value (3rd occurrence).
+rule prep_dist:
+    input:
+        dist="data/{dataset}/{dataset}.dist"
+    output:
+        dist='data/{dataset}/{dataset}.ng.dist'
+    shell:
+        """
+        cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
+        """
+
+# vsearch doesn't support dots or hyphens in sequence names.
+rule prep_count_table:
+    input:
+        count_table="data/{dataset}/{dataset}.count_table"
+    output:
+        count_table='data/{dataset}/{dataset}.ng.count_table'
+    shell:
+        """
+        cat {input.count_table} |  sed 's/[\.-]/_/g' > {output.count_table}
         """
 
 rule remove_gaps_query:
     input:
-        fna="data/miseq_vdgc_debug/miseq_1.0_01/{dataset}.fasta" # TODO
+        fna="data/{dataset}/{dataset}.fasta"
     output:
-        degap=temp("data/miseq_vdgc_debug/miseq_1.0_01.tmp.fasta"),
-        fna="data/miseq_vdgc_debug/miseq_1.0_01.ng.fasta"
+        degap=temp("data/{dataset}/{dataset}.tmp.fasta"),
+        fna="data/{dataset}/{dataset}.ng.fasta"
     log:
-        'log/miseq_vdgc_debug/miseq_1.0_01/remove_gaps_query.log'
+        'log/{dataset}/remove_gaps_query.log'
     params:
-        outdir="data/miseq_vdgc_debug/miseq_1.0_01/",
-        prefix='miseq_1.0_01.tmp'
+        outdir="data/{dataset}/",
+        prefix='{dataset}.tmp'
     resources:
         procs=2
     shell:
@@ -43,13 +99,12 @@ rule remove_gaps_query:
         cat {output.degap} | sed 's/[\.-]/_/g' > {output.fna}
         """
 
-
 rule vsearch_sort:
     input:
-        fna="data/miseq_vdgc_debug/miseq_1.0_01.ng.fasta" #data/miseq/miseq_1.0_01.ng.fasta
+        fna="data/{dataset}/{dataset}.ng.fasta"
     output:
-        fna="data/miseq_vdgc_debug/miseq_1.0_01.ng.sorted.fasta",
-        uc="data/miseq_vdgc_debug/miseq_1.0_01.ng.sorted.uc"
+        fna="data/{dataset}/{dataset}.ng.sorted.fasta",
+        uc="data/{dataset}/{dataset}.ng.sorted.uc"
     shell:
         """
         vsearch \
@@ -66,9 +121,9 @@ rule vsearch_de_novo:
     input:
         query=rules.vsearch_sort.output.fna
     output:
-        uc='results/miseq_1.0_01/de_novo/miseq_1.0_01.uc'
+        uc='results/{dataset}/de_novo/{dataset}.uc'
     benchmark:
-        'benchmarks/miseq_1.0_01/vsearch.method_de_novo.miseq_1.0_01.txt'
+        'benchmarks/{dataset}/vsearch.method_de_novo.{dataset}.txt'
     params:
         perc_identity=perc_identity,
         min_seq_length=min_seq_length,
@@ -94,50 +149,29 @@ rule vsearch_de_novo:
 
 rule uc_to_list:
     input:
-        code='code/R/uc_to_list.R',
+        code='code/uc_to_list_KLS.R',
         sorted=rules.vsearch_sort.output.uc,
-        clustered='results/miseq_1.0_01/{method}/{dataset_step}.uc'
+        clustered='results/{dataset}/{method}/{dataset}.uc'
     output:
-        list='results/miseq_1.0_01/{method}/{dataset_step}.list'
+        list='results/{dataset}/{method}/{dataset}.list'
     script:
-        'code/R/uc_to_list.R'
+        'code/uc_to_list_KLS.R'
 
-# vsearch doesn't support dots or hyphens in sequence names.
-rule prep_count_table:
-    input:
-        count_table=prep_samples("data/{dataset}/processed/{dataset}.count_table") # TODO
-    output:
-        count_table='data/miseq_vdgc_debug/miseq_1.0_01.count_table'
-    shell:
-        """
-        cat {input.count_table} |  sed 's/[\.-]/_/g' > {output.count_table}
-        """
-
-# replace dots/hyphens in fasta headers (1st & 2nd occurrence),
-# but not in the distance value (3rd occurrence).
-rule prep_dist:
-    input:
-        dist=prep_samples("results/{dataset}/{dataset}.dist") # TODO
-    output:
-        dist='data/miseq_1.0_01/miseq_1.0_01.dist'
-    shell:
-        """
-        cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
-        """
 
 rule sensspec_vsearch:
     input:
-        list="results/miseq_1.0_01/{method}/miseq_1.0_01.list",
-        count_table='data/miseq_vdgc_debug/miseq_1.0_01.count_table',
+        list=rules.uc_to_list.output.list,
+        count_table=rules.prep_count_table.output.count_table,
         dist=rules.prep_dist.output.dist
     output:
-        tsv='results/miseq_1.0_01/{method}/miseq_1.0_01.sensspec'
+        tsv='results/{dataset}/{method}/{dataset}.sensspec'
     params:
-        outdir='results/miseq_1.0_01/{method}/'
+        outdir='results/{dataset}/{method}/'
     log:
-        'log/miseq_1.0_01/sensspec.method_{method}.miseq_1.0_01.txt'
+        'log/{dataset}/sensspec.method_{method}.{dataset}.txt'
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
+        # mothur "#sens.spec(column=data/miseq/miseq_1.0_01.unique.dist, list=data/miseq/miseq_1.0_01.vdgc.list, name=data/miseq/miseq_1.0_01.names, label=userLabel, cutoff=0.03, outputdir=data/miseq)"
