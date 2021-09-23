@@ -5,7 +5,7 @@ max_rejects = 64
 # the default value of wordlength is already 8 but I'm paranoid
 word_length = 8
 
-datasets = ["miseq_PDS", "mouse_KLS"]
+datasets = ["miseq_PDS", "mouse_KLS", 'miseq_1.0_01']
 
 rule targets:
     input:
@@ -203,9 +203,9 @@ rule uc_to_list_MISEQ1:
 
 rule prep_dist_MISEQ1:
     input:
-        dist="data/{dataset}/{dataset}.unique.dist"
+        dist="data/miseq/miseq_1.0_01.unique.dist"
     output:
-        dist='data/{dataset}/{dataset}.unique.ng.dist'
+        dist='data/miseq/miseq_1.0_01.unique.ng.dist'
     shell:
         """
         cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
@@ -225,7 +225,7 @@ rule sensspec_vsearch_MISEQ1:
     input:
         list=rules.replace_hyphens_MISEQ1.output.list,
         count_table="data/miseq_PDS/miseq_PDS.count_table",
-        dist='data/miseq/miseq_1.0_01.unique.ng.dist'
+        dist='data/miseq_1.0_01/miseq_1.0_01.unique.ng.dist'
     output:
         tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
