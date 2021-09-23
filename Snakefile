@@ -201,11 +201,31 @@ rule uc_to_list_MISEQ1:
     script:
         'code/uc_to_list_KLS.R'
 
+rule prep_dist_MISEQ1:
+    input:
+        dist="data/{dataset}/{dataset}.unique.dist"
+    output:
+        dist='data/{dataset}/{dataset}.unique.ng.dist'
+    shell:
+        """
+        cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
+        """
+
+rule replace_hyphens_MISEQ1:
+    input:
+        list=rules.uc_to_list_MISEQ1.output.list
+    output:
+        list='results/miseq_1.0_01/de_novo/miseq_1.0_01.ng.list'
+    shell:
+        """
+        cat {input.list} | sed 's/-/_/g' > {output.list}
+        """
+
 rule sensspec_vsearch_MISEQ1:
     input:
-        list=rules.uc_to_list_MISEQ1.output.list,
+        list=rules.replace_hyphens_MISEQ1.output.list,
         count_table="data/miseq_PDS/miseq_PDS.count_table",
-        dist='data/miseq/miseq_1.0_01.unique.dist'
+        dist='data/miseq/miseq_1.0_01.unique.ng.dist'
     output:
         tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
