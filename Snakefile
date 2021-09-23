@@ -211,7 +211,7 @@ rule prep_dist_MISEQ1:
         cat {input.dist} |  sed 's/[\.-]/_/' | sed 's/[\.-]/_/' > {output.dist}
         """
 
-rule replace_hyphens_MISEQ1:
+rule prep_list_MISEQ1:
     input:
         list=rules.uc_to_list_MISEQ1.output.list
     output:
@@ -221,10 +221,20 @@ rule replace_hyphens_MISEQ1:
         cat {input.list} | sed 's/-/_/g' > {output.list}
         """
 
+rule prep_names_MISEQ1:
+    input:
+        names="data/miseq/miseq_1.0_01.names"
+    output:
+        names="data/miseq/miseq_1.0_01.ng.names"
+    shell:
+        """
+        cat {input.names} | sed 's/-/_/g' > {output.names}
+        """
+
 rule sensspec_vsearch_MISEQ1:
     input:
-        list=rules.replace_hyphens_MISEQ1.output.list,
-        count_table="data/miseq_PDS/miseq_PDS.count_table",
+        list=rules.prep_list_MISEQ1.output.list,
+        names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist
     output:
         tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
@@ -235,5 +245,5 @@ rule sensspec_vsearch_MISEQ1:
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
-            sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
+            sens.spec(list={input.list}, names={input.names}, column={input.dist}) '
         """
