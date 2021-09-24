@@ -24,3 +24,5 @@ code/slurm/
 
 .snakemake/
 benchmarks/
+
+results/m*
