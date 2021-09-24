@@ -16,15 +16,15 @@ rule targets:
 
 rule aggregate_sensspec:
     input:
-        R='code/rbind.tsv',
-        tsv=expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec",
+        R='code/rbind.R',
+        tsv=expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec.mod.tsv",
                 dataset = datasets,
                 mver = mothur_versions,
                 vver = vsearch_versions)
     output:
         tsv='results/all_sensspec.tsv'
     script:
-        'code/rbind.tsv'
+        'code/rbind.R'
 
 rule download_vsearch_altVersion:
     output:
