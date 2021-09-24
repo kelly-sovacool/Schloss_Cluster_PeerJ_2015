@@ -76,7 +76,7 @@ rule calc_dists_dataset:
     log:
         "log/{dataset}/calc_dists.log"
     resources:
-        procs=16
+        procs=8
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
@@ -118,7 +118,7 @@ rule remove_gaps_query:
         outdir="data/{dataset}/",
         prefix='{dataset}.tmp'
     resources:
-        procs=2
+        procs=8
     shell:
         """
         mothur '#set.dir(output={params.outdir}); set.logfile(name={log});
