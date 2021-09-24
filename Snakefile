@@ -5,7 +5,7 @@ max_rejects = 64
 # the default value of wordlength is already 8 but I'm paranoid
 word_length = 8
 
-datasets = ["miseq_PDS", "mouse_KLS"]
+datasets = ["miseq_PDS", "mouse_KLS", "miseq_1.0_01"]
 vsearch_versions = ['1.5.0', '2.15.2']
 mothur_versions = ['1.37.0', '1.46.1']
 
