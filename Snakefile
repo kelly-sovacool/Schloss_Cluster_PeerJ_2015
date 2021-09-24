@@ -6,14 +6,25 @@ max_rejects = 64
 word_length = 8
 
 datasets = ["miseq_PDS", "mouse_KLS"]
+vsearch_versions = ['1.5.0', '2.15.2']
+mothur_versions = ['1.37.0', '1.46.1']
 
 rule targets:
     input:
-        expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec",
-                dataset = datasets,
-                mver = ['1.37.0', '1.46.1'],
-                vver = ['1.5.0', '2.15.2']),
+        'results/all_sensspec.tsv',
         'results/seq_counts.txt'
+
+rule aggregate_sensspec:
+    input:
+        R='code/rbind.tsv',
+        tsv=expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec",
+                dataset = datasets,
+                mver = mothur_versions,
+                vver = vsearch_versions)
+    output:
+        tsv='results/all_sensspec.tsv'
+    script:
+        'code/rbind.tsv'
 
 rule download_vsearch_altVersion:
     output:
@@ -192,6 +203,15 @@ rule sensspec_vsearch:
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
+
+rule mutate_sensspec:
+    input:
+        tsv=rules.sensspec_vsearch.output.tsv,
+        R='code/mutate_sensspec.R'
+    output:
+        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec.mod.tsv'
+    script:
+        'code/mutate_sensspec.R'
 
 rule count_seqs:
     input:
