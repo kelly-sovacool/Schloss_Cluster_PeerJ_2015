@@ -31,27 +31,30 @@ rule download_vsearch_altVersion:
     output:
         bin='code/vsearch-{version}/vsearch'
     params:
-        tar='bin/vsearch-{version}-linux-x86_64.tar.gz',
-        bin='bin/vsearch-{version}-linux-x86_64/bin/vsearch'
+        tempdir='tmp/vsearch-{version}/',
+        tar='tmp/vsearch-{version}/vsearch-{version}-linux-x86_64.tar.gz',
+        bin='tmp/vsearch-{version}/vsearch-{version}-linux-x86_64/bin/vsearch'
     shell:
         """
-        wget -P bin/ https://github.com/torognes/vsearch/releases/download/v{wildcards.version}/vsearch-{wildcards.version}-linux-x86_64.tar.gz
-        tar -C bin/ -xzvf {params.tar}
+        wget -P {params.tempdir} https://github.com/torognes/vsearch/releases/download/v{wildcards.version}/vsearch-{wildcards.version}-linux-x86_64.tar.gz
+        tar -C {params.tempdir} -xzvf {params.tar}
         mv {params.bin} {output.bin}
-        rm -rf bin/
+        rm -rf {params.tempdir}
         """
 
 rule download_mothur_altVersion:
     output:
-        tar='code/mothur-{version}/Mothur.linux_64.zip',
         bin='code/mothur-{version}/mothur'
     params:
-        dir='code/mothur-{version}/'
+        tempdir='tmp/mothur-{version}/',
+        zip=f'Mothur.linux_{64 if "{version}" == "1.37.0" else 8}.zip',
+        outdir='code/mothur-{version}/'
     shell:
         """
-        wget -P {params.dir} https://github.com/mothur/mothur/releases/download/v{wildcards.version}/Mothur.linux_64.zip
-        unzip -d {params.dir} {output.tar}
-        mv code/mothur-{wildcards.version}/mothur/* {params.dir}
+        wget -P {params.tempdir} https://github.com/mothur/mothur/releases/download/v{wildcards.version}/{params.zip}
+        unzip -d {params.tempdir} {params.tempdir}/{params.zip}
+        mv {params.tempdir}/mothur/* {params.outdir}
+        rm -rf {params.tempdir}
         """
 
 rule copy_pds_files:
