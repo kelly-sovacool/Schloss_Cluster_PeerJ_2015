@@ -20,6 +20,7 @@ code/vsearch*
 code/sumaclust_v1.0.20
 code/NINJA-OPS
 code/mothur*
+code/slurm/
 
 .snakemake/
 benchmarks/
