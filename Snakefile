@@ -130,15 +130,14 @@ rule remove_gaps_query:
 
 rule vsearch_sort:
     input:
-        fna="data/{dataset}/{dataset}.ng.fasta"
+        fna="data/{dataset}/{dataset}.ng.fasta",
+        bin="code/vsearch-{vver}/vsearch"
     output:
         fna="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.fasta",
         uc="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.uc"
-    params:
-        vsearch="code/vsearch-{vver}/vsearch"
     shell:
         """
-        {params.vsearch} \
+        {input.bin} \
             --derep_fulllength {input.fna} \
             --sizeout \
             --minseqlength 30 \
@@ -150,7 +149,8 @@ rule vsearch_sort:
 
 rule vsearch_de_novo:
     input:
-        query=rules.vsearch_sort.output.fna
+        query=rules.vsearch_sort.output.fna,
+        bin="code/vsearch-{vver}/vsearch"
     output:
         uc='results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.uc'
     benchmark:
@@ -160,13 +160,12 @@ rule vsearch_de_novo:
         min_seq_length=min_seq_length,
         max_accepts=max_accepts,
         max_rejects=max_rejects,
-        word_length=word_length,
-        vsearch='code/vsearch-{vver}/vsearch'
+        word_length=word_length
     resources:
         procs=8
     shell:
         """
-        {params.vsearch} --cluster_smallmem {input.query} \
+        {input.bin} --cluster_smallmem {input.query} \
             --usersort \
             --uc {output.uc} \
             --threads {resources.procs} \
@@ -194,7 +193,8 @@ rule sensspec_vsearch:
     input:
         list=rules.uc_to_list.output.list,
         count_table=rules.prep_count_table.output.count_table,
-        dist=rules.prep_dist.output.dist
+        dist=rules.prep_dist.output.dist,
+        bin='code/mothur-{version}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec'
     params:
@@ -204,7 +204,7 @@ rule sensspec_vsearch:
         'log/mothur-{mver}_vsearch-{vver}/{dataset}/sensspec.method_{method}.{dataset}.txt'
     shell:
         """
-        {params.mothur} '#set.logfile(name={log}); set.dir(output={params.outdir});
+        {input.bin} '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
 
@@ -255,7 +255,8 @@ rule sensspec_vsearch_MISEQ1:
     input:
         list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.list',
         names=rules.prep_names_MISEQ1.output.names,
-        dist=rules.prep_dist_MISEQ1.output.dist
+        dist=rules.prep_dist_MISEQ1.output.dist,
+        bin='code/mothur-{version}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
@@ -265,7 +266,7 @@ rule sensspec_vsearch_MISEQ1:
         'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
     shell:
         """
-        {params.mothur} '#set.logfile(name={log}); set.dir(output={params.outdir});
+        {input.bin} '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, name={input.names}, column={input.dist}) '
         """
 
