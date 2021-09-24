@@ -47,7 +47,7 @@ rule download_mothur_altVersion:
         bin='code/mothur-{version}/mothur'
     params:
         tempdir='tmp/mothur-{version}/',
-        zip=f'Mothur.linux_{64 if "{version}" == "1.37.0" else 8}.zip',
+        zip=f'Mothur.linux_{"64" if "{version}" == "1.37.0" else "8_noReadline"}.zip',
         outdir='code/mothur-{version}/'
     shell:
         """
