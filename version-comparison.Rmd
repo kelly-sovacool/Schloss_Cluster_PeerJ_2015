@@ -1,0 +1,38 @@
+---
+title: "Why does VSEARCH perform worse than in Pat's 2015 PeerJ paper?"
+output: github_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      fig.path = here::here('scratch','figures/')
+                      )
+```
+
+```{r deps}
+library(glue)
+library(here)
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+Pat had MCC's of ~`0.7` for the MiSeq mouse dataset with VSEARCH DGC.
+I'm getting MCC's of `0.5781` in the OptiFit analysis repo with the same dataset.
+
+## My Snakefile
+
+```{r dat}
+dat <- read_tsv(here('results/all_sensspec.tsv'))
+dat %>% 
+    ggplot(aes(dataset, mcc)) +
+    geom_point() +
+    facet_grid(mothur ~ vsearch) +
+    ylim(0, 1)
+```
+
+## Pat's Makefile
+
+But when I run Pat's makefile with mothur v1.37.0, get an MCC of `0.78`.
+If I run it with mothur v.1.46.1, I get an MCC of `0`.
