@@ -226,41 +226,31 @@ rule count_seqs:
         done
         """
 
-rule uc_to_list_MISEQ1:
+rule copy_fasta_MISEQ1:
     input:
-        code='code/uc_to_list_KLS.R',
-        sorted='data/miseq/miseq_1.0_01.vdgc.sorted.uc',
-        clustered='data/miseq/miseq_1.0_01.vdgc.clustered.uc'
+        fna="data/miseq/miseq_1.0_01.unique.fasta"
     output:
-        list='results/miseq_1.0_01/de_novo/miseq_1.0_01.list'
-    script:
-        'code/uc_to_list_KLS.R'
+        fna="data/miseq/miseq_1.0_01.fasta"
+    shell:
+        """
+        cp {input} {output}
+        """
 
 rule prep_dist_MISEQ1:
     input:
         dist="data/miseq/miseq_1.0_01.unique.dist"
     output:
-        dist='results/miseq_1.0_01/miseq_1.0_01.unique.ng.dist'
+        dist='data/miseq_1.0_01/miseq_1.0_01.ng.dist'
     shell:
         """
         cat {input.dist} |  sed 's/-/_/g' > {output.dist}
-        """
-
-rule prep_list_MISEQ1:
-    input:
-        list=rules.uc_to_list_MISEQ1.output.list
-    output:
-        list='results/miseq_1.0_01/de_novo/miseq_1.0_01.ng.list'
-    shell:
-        """
-        cat {input.list} | sed 's/-/_/g' > {output.list}
         """
 
 rule prep_names_MISEQ1:
     input:
         names="data/miseq/miseq_1.0_01.names"
     output:
-        names="data/miseq/miseq_1.0_01.ng.names"
+        names="data/miseq_1.0_01/miseq_1.0_01.ng.names"
     shell:
         """
         cat {input.names} | sed 's/-/_/g' > {output.names}
@@ -268,11 +258,11 @@ rule prep_names_MISEQ1:
 
 rule sensspec_vsearch_MISEQ1:
     input:
-        list=rules.prep_list_MISEQ1.output.list,
+        list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.list',
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist
     output:
-        tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.ng.sensspec'
+        tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
         outdir='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/'
     log:
