@@ -9,8 +9,10 @@ datasets = ["miseq_PDS", "mouse_KLS", 'miseq_1.0_01']
 
 rule targets:
     input:
-        expand("results/{dataset}/de_novo/{dataset}.sensspec",
-                dataset = datasets),
+        expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec",
+                dataset = datasets,
+                mver = ['1.37.0', '1.46.1'],
+                vver = ['1.5.0', '2.15.2']),
         'results/seq_counts.txt'
 
 rule download_vsearch_altVersion:
@@ -25,6 +27,19 @@ rule download_vsearch_altVersion:
         tar -C bin/ -xzvf {params.tar}
         mv {params.bin} {output.bin}
         rm -rf bin/
+        """
+
+rule download_mothur_altVersion:
+    output:
+        tar='code/mothur-{version}/Mothur.linux_64.zip',
+        bin='code/mothur-{version}/mothur'
+    params:
+        dir='code/mothur-{version}/'
+    shell:
+        """
+        wget -P {params.dir} https://github.com/mothur/mothur/releases/download/v{wildcards.version}/Mothur.linux_64.zip
+        unzip -d {params.dir} {output.tar}
+        mv code/mothur-{wildcards.version}/mothur/* {params.dir}
         """
 
 rule copy_pds_files:
@@ -106,8 +121,8 @@ rule vsearch_sort:
     input:
         fna="data/{dataset}/{dataset}.ng.fasta"
     output:
-        fna="data/{dataset}/{dataset}.ng.sorted.fasta",
-        uc="data/{dataset}/{dataset}.ng.sorted.uc"
+        fna="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.fasta",
+        uc="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.uc"
     shell:
         """
         vsearch \
@@ -124,9 +139,9 @@ rule vsearch_de_novo:
     input:
         query=rules.vsearch_sort.output.fna
     output:
-        uc='results/{dataset}/de_novo/{dataset}.uc'
+        uc='results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.uc'
     benchmark:
-        'benchmarks/{dataset}/vsearch.method_de_novo.{dataset}.txt'
+        'benchmarks/mothur-{mver}_vsearch-{vver}/{dataset}/vsearch.method_de_novo.{dataset}.txt'
     params:
         perc_identity=perc_identity,
         min_seq_length=min_seq_length,
@@ -154,9 +169,9 @@ rule uc_to_list:
     input:
         code='code/uc_to_list_KLS.R',
         sorted=rules.vsearch_sort.output.uc,
-        clustered='results/{dataset}/{method}/{dataset}.uc'
+        clustered='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc'
     output:
-        list='results/{dataset}/{method}/{dataset}.list'
+        list='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.list'
     script:
         'code/uc_to_list_KLS.R'
 
@@ -167,11 +182,11 @@ rule sensspec_vsearch:
         count_table=rules.prep_count_table.output.count_table,
         dist=rules.prep_dist.output.dist
     output:
-        tsv='results/{dataset}/{method}/{dataset}.sensspec'
+        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec'
     params:
-        outdir='results/{dataset}/{method}/'
+        outdir='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/'
     log:
-        'log/{dataset}/sensspec.method_{method}.{dataset}.txt'
+        'log/mothur-{mver}_vsearch-{vver}/{dataset}/sensspec.method_{method}.{dataset}.txt'
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
@@ -237,11 +252,11 @@ rule sensspec_vsearch_MISEQ1:
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist
     output:
-        tsv='results/miseq_1.0_01/de_novo/miseq_1.0_01.ng.sensspec'
+        tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.ng.sensspec'
     params:
-        outdir='results/miseq_1.0_01/de_novo/'
+        outdir='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/'
     log:
-        'log/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
+        'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
     shell:
         """
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
