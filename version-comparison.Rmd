@@ -36,3 +36,6 @@ dat %>%
 
 But when I run Pat's makefile with mothur v1.37.0, get an MCC of `0.78`.
 If I run it with mothur v.1.46.1, I get an MCC of `0`.
+
+Noticed that Pat uses the non-unique version of the fasta file as input to
+VSEARCH. Maybe that's the problem??

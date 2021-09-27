@@ -198,7 +198,7 @@ rule sensspec_vsearch:
         list=rules.uc_to_list.output.list,
         count_table=rules.prep_count_table.output.count_table,
         dist=rules.prep_dist.output.dist,
-        bin='/home/sovacool/bin/miniconda3/envs/optifit/bin/mothur'#'code/mothur-{mver}/mothur'
+        bin='code/mothur-{mver}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec'
     params:
@@ -260,7 +260,7 @@ rule sensspec_vsearch_MISEQ1:
         list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.list',
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist,
-        bin='/home/sovacool/bin/miniconda3/envs/optifit/bin/mothur'#'code/mothur-{mver}/mothur'
+        bin='code/mothur-{mver}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
@@ -282,3 +282,6 @@ rule mutate_sensspec:
         tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec.mod.tsv'
     script:
         'code/mutate_sensspec.R'
+
+
+# Noticed that Pat uses the non-unique version of the fasta file as input to VSEARCH. Maybe that's the problem??
