@@ -198,7 +198,7 @@ rule sensspec_vsearch:
         list=rules.uc_to_list.output.list,
         count_table=rules.prep_count_table.output.count_table,
         dist=rules.prep_dist.output.dist,
-        bin='code/mothur-{mver}/mothur'
+        bin='/home/sovacool/bin/miniconda3/envs/optifit/bin/mothur'#'code/mothur-{mver}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec'
     params:
@@ -260,7 +260,7 @@ rule sensspec_vsearch_MISEQ1:
         list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.list',
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist,
-        bin='code/mothur-{mver}/mothur'
+        bin='/home/sovacool/bin/miniconda3/envs/optifit/bin/mothur'#'code/mothur-{mver}/mothur'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
