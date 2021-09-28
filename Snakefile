@@ -142,7 +142,7 @@ rule vsearch_sort:
         uc="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.uc"
     shell:
         """
-        export PATH="{input.bin}/:$PATH"
+        #export PATH="{input.bin}/:$PATH"
         vsearch \
             --derep_fulllength {input.fna} \
             --sizeout \
@@ -171,7 +171,7 @@ rule vsearch_de_novo:
         procs=8
     shell:
         """
-        export PATH="{input.bin}/:$PATH"
+        #export PATH="{input.bin}/:$PATH"
         vsearch --cluster_smallmem {input.query} \
             --usersort \
             --uc {output.uc} \
@@ -211,7 +211,7 @@ rule sensspec_vsearch:
         'log/mothur-{mver}_vsearch-{vver}/{dataset}/sensspec.method_{method}.{dataset}.uc-to-list_{inits}.txt'
     shell:
         """
-        export PATH="{input.bin}/:$PATH"
+        #export PATH="{input.bin}/:$PATH"
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
@@ -274,7 +274,7 @@ rule sensspec_vsearch_MISEQ1:
         'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
     shell:
         """
-        export PATH="{input.bin}/:$PATH"
+        #export PATH="{input.bin}/:$PATH"
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, name={input.names}, column={input.dist}) '
         """
