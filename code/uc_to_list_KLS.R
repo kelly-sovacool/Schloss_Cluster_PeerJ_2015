@@ -39,4 +39,13 @@ uc_to_list <- function(clustered_file_name,
   write(list_data, list_file_name)
 }
 
-uc_to_list(snakemake@input[["clustered"]], snakemake@output[["list"]])
+
+if (exists('snakemake')) {
+    uc_filename <- snakemake@input[["clustered"]]
+    list_filename <- snakemake@output[["list"]]
+} else {
+    args <- commandArgs(trailingOnly=TRUE)
+    uc_filename <- args[1]
+    list_filename <- args[2]
+}
+uc_to_list(uc_filename, list_filename)

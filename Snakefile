@@ -18,10 +18,11 @@ rule targets:
 rule aggregate_sensspec:
     input:
         R='code/rbind.R',
-        tsv=expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.sensspec.mod.tsv",
+        tsv=expand("results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.uc-to-list_{inits}.sensspec.mod.tsv",
                 dataset = datasets,
                 mver = mothur_versions,
-                vver = vsearch_versions)
+                vver = vsearch_versions,
+                inits = ['KLS', 'PDS'])
     output:
         tsv='results/all_sensspec.tsv'
     script:
@@ -135,13 +136,14 @@ rule remove_gaps_query:
 rule vsearch_sort:
     input:
         fna="data/{dataset}/{dataset}.ng.fasta",
-        bin="code/vsearch-{vver}/vsearch"
+        bin="code/vsearch-{vver}/"
     output:
         fna="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.fasta",
         uc="results/mothur-{mver}_vsearch-{vver}/{dataset}/{dataset}.ng.sorted.uc"
     shell:
         """
-        {input.bin} \
+        export PATH="{input.bin}/:$PATH"
+        vsearch \
             --derep_fulllength {input.fna} \
             --sizeout \
             --minseqlength 30 \
@@ -154,7 +156,7 @@ rule vsearch_sort:
 rule vsearch_de_novo:
     input:
         query=rules.vsearch_sort.output.fna,
-        bin="code/vsearch-{vver}/vsearch"
+        bin="code/vsearch-{vver}/"
     output:
         uc='results/mothur-{mver}_vsearch-{vver}/{dataset}/de_novo/{dataset}.uc'
     benchmark:
@@ -169,7 +171,8 @@ rule vsearch_de_novo:
         procs=8
     shell:
         """
-        {input.bin} --cluster_smallmem {input.query} \
+        export PATH="{input.bin}/:$PATH"
+        vsearch --cluster_smallmem {input.query} \
             --usersort \
             --uc {output.uc} \
             --threads {resources.procs} \
@@ -184,13 +187,13 @@ rule vsearch_de_novo:
 
 rule uc_to_list:
     input:
-        code='code/uc_to_list_KLS.R',
+        code='code/uc_to_list_{inits}.R',
         sorted=rules.vsearch_sort.output.uc,
         clustered='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc'
     output:
-        list='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.list'
-    script:
-        'code/uc_to_list_KLS.R'
+        list='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc-to-list_{inits}.list'
+    shell:
+        'Rscript {input.code}'
 
 
 rule sensspec_vsearch:
@@ -198,17 +201,18 @@ rule sensspec_vsearch:
         list=rules.uc_to_list.output.list,
         count_table=rules.prep_count_table.output.count_table,
         dist=rules.prep_dist.output.dist,
-        bin='code/mothur-{mver}/mothur'
+        bin='code/mothur-{mver}/'
     output:
-        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec'
+        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc-to-list_{inits}.sensspec'
     params:
         outdir='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/',
         mothur='code/mothur-{mver}/mothur'
     log:
-        'log/mothur-{mver}_vsearch-{vver}/{dataset}/sensspec.method_{method}.{dataset}.txt'
+        'log/mothur-{mver}_vsearch-{vver}/{dataset}/sensspec.method_{method}.{dataset}.uc-to-list_{inits}.txt'
     shell:
         """
-        {input.bin} '#set.logfile(name={log}); set.dir(output={params.outdir});
+        export PATH="{input.bin}/:$PATH"
+        mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, count={input.count_table}, column={input.dist}) '
         """
 
@@ -257,10 +261,10 @@ rule prep_names_MISEQ1:
 
 rule sensspec_vsearch_MISEQ1:
     input:
-        list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.list',
+        list='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.uc-to-list_{inits}.list',
         names=rules.prep_names_MISEQ1.output.names,
         dist=rules.prep_dist_MISEQ1.output.dist,
-        bin='code/mothur-{mver}/mothur'
+        bin='code/mothur-{mver}/'
     output:
         tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
     params:
@@ -270,16 +274,17 @@ rule sensspec_vsearch_MISEQ1:
         'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
     shell:
         """
-        {input.bin} '#set.logfile(name={log}); set.dir(output={params.outdir});
+        export PATH="{input.bin}/:$PATH"
+        mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
             sens.spec(list={input.list}, name={input.names}, column={input.dist}) '
         """
 
 rule mutate_sensspec:
     input:
-        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec',
+        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc-to-list_{inits}.sensspec',
         R='code/mutate_sensspec.R'
     output:
-        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.sensspec.mod.tsv'
+        tsv='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc-to-list_{inits}.sensspec.mod.tsv'
     script:
         'code/mutate_sensspec.R'
 
