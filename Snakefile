@@ -194,7 +194,7 @@ rule uc_to_list:
     output:
         list='results/mothur-{mver}_vsearch-{vver}/{dataset}/{method}/{dataset}.uc-to-list_{inits}.list'
     shell:
-        'Rscript {input.code} {input.clustered} {output.list}'
+        'Rscript {input.code} {input.sorted} {input.clustered} {output.list}'
 
 
 rule sensspec_vsearch:
