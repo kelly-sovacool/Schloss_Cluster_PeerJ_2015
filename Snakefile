@@ -279,7 +279,7 @@ rule sensspec_vsearch_MISEQ1:
         """
         #export PATH="{input.bin}/:$PATH"
         mothur '#set.logfile(name={log}); set.dir(output={params.outdir});
-            sens.spec(list={input.list}, name={input.names}, column={input.dist, label=userLabel, cutoff=0.03}) '
+            sens.spec(list={input.list}, name={input.names}, column={input.dist}, label=userLabel, cutoff=0.03) '
         """
 
 rule mutate_sensspec:
