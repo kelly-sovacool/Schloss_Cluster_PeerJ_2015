@@ -26,8 +26,8 @@ uc_to_list <- function(unique_file_name, clustered_file_name, list_file_name) {
 
 	list_data <- paste(
 	    paste('label', 'numOTUs',
-	          sapply(1:length(otus), function(x) {paste0('OTU_', x)}),
-	          collapse='\t'),
+	          paste(sapply(1:length(otus), function(x) {paste0('OTU_', x)}), collapse ='\t'),
+	          sep='\t'),
         paste("userLabel", length(otus), paste(otus, collapse="\t"),
               sep="\t"),
 	    sep='\n')
