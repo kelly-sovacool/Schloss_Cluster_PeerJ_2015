@@ -267,12 +267,12 @@ rule sensspec_vsearch_MISEQ1:
         dist=rules.prep_dist_MISEQ1.output.dist,
         bin='code/mothur-{mver}/'
     output:
-        tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.sensspec'
+        tsv='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/miseq_1.0_01.uc-to-list_{inits}.sensspec'
     params:
         outdir='results/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/de_novo/',
         mothur='code/mothur-{mver}/mothur'
     log:
-        'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.txt'
+        'log/mothur-{mver}_vsearch-{vver}/miseq_1.0_01/sensspec.method_de_novo.miseq_1.0_01.uc-to-list_{inits}.txt'
     shell:
         """
         #export PATH="{input.bin}/:$PATH"
