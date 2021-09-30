@@ -28,8 +28,7 @@ dat <- read_tsv(here('results/all_sensspec.tsv'))
 dat %>% 
     ggplot(aes(dataset, mcc)) +
     geom_point() +
-    facet_grid(mothur ~ vsearch) +
-    ylim(0, 1)
+    facet_grid(mothur ~ vsearch) #+ylim(0, 1)
 ```
 
 ## Pat's Makefile

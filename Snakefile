@@ -9,6 +9,7 @@ word_length = 8
 datasets = ["mouse_KLS_unique", "mouse_KLS_redundant"]#, "miseq_PDS", "miseq_1.0_01"]
 vsearch_versions = ['2.15.2']#, '1.5.0']
 mothur_versions = ['1.46.1']#, '1.37.0']
+initials = ['PDS']#, 'KLS']
 
 rule targets:
     input:
@@ -22,7 +23,7 @@ rule aggregate_sensspec:
                 dataset = datasets,
                 mver = mothur_versions,
                 vver = vsearch_versions,
-                inits = ['KLS', 'PDS'])
+                inits = initials)
     output:
         tsv='results/all_sensspec.tsv'
     script:
