@@ -24,8 +24,13 @@ uc_to_list <- function(unique_file_name, clustered_file_name, list_file_name) {
 		otus[hits[i,"V2"]+1] <- paste(otus[hits[i,"V2"]+1], names_second_column[hits[i,"sequence"]], sep=",")
 	}
 
-	list_data <- paste(otus, collapse="\t")
-	list_data <- paste("userLabel", length(otus), list_data, sep="\t")
+	list_data <- paste(
+	    paste('label', 'numOTUs',
+	          sapply(1:length(otus), function(x) {paste0('OTU_', x)}),
+	          collapse='\t'),
+        paste("userLabel", length(otus), paste(otus, collapse="\t"),
+              sep="\t"),
+	    sep='\n')
 	write.table(x=list_data, file=list_file_name, quote=F, row.names=F, col.names=F, sep="\t")
 
 }
