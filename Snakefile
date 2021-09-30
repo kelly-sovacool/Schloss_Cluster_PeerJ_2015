@@ -11,6 +11,8 @@ vsearch_versions = ['2.15.2']#, '1.5.0']
 mothur_versions = ['1.46.1']#, '1.37.0']
 initials = ['PDS']#, 'KLS']
 
+ruleorder: sensspec_vsearch_MISEQ1 > sensspec_vsearch
+
 rule targets:
     input:
         'results/all_sensspec.tsv',
@@ -291,3 +293,4 @@ rule mutate_sensspec:
 
 
 # Noticed that Pat uses the non-unique version of the fasta file as input to VSEARCH. Maybe that's the problem??
+
