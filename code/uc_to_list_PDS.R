@@ -33,4 +33,4 @@ args <- commandArgs(trailingOnly=TRUE)
 unique_filename <- args[1]
 clustered_filename <- args[2]
 list_filename <- args[3]
-uc_to_list(unique_filename, clustered_filename, liste_filename)
+uc_to_list(unique_filename, clustered_filename, list_filename)
