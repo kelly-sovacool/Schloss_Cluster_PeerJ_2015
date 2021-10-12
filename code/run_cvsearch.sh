@@ -11,4 +11,4 @@ code/vsearch/vsearch --maxaccepts 16 --id 0.97 --minseqlength 30 --threads 1 --w
 
 R -e "source('code/cvsearch_to_list.R'); cvsearch_to_list('$CLOSED_PATH/vsearch/abundance_sorted.uc', '$CLOSED_PATH/vsearch/ref_clustered.uc')"
 
-rm -rf $CLOSED_PATH/
+#rm -rf $CLOSED_PATH/
